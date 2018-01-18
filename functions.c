@@ -553,7 +553,8 @@ static void handle_IQ_upgrade(struct template_state *tmpl, const char *filename,
         set_upload_message("IQ allocation failed");
         return;
     }
-    strcpy(buf->name, "ov9732");
+    extern char *sensor_driver_name;
+    strcpy(buf->name, sensor_driver_name);
     buf->start = 0x20;
     buf->end = 0x20 + size;
     memset(buf->data, 0xFF, sizeof(buf->data));
