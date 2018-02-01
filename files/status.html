@@ -24,6 +24,7 @@
   <button class="tablinks" onclick="openTab(event, 'Baro')">Baro</button>
   <button class="tablinks" onclick="openTab(event, 'GPS')">GPS</button>
   <button class="tablinks" onclick="openTab(event, 'EKF')">EKF</button>
+  <button class="tablinks" onclick="openTab(event, 'Flow')">Flow</button>
   <button class="tablinks" onclick="openTab(event, 'Transmitter')">Transmitter</button>
   <button class="tablinks" onclick="openTab(event, 'Camera')">Camera</button>
   <button class="tablinks" onclick="openTab(event, 'Motors')">Motors</button>
@@ -203,11 +204,13 @@ Core system information<p>
 
   <table class="values">
     <tr><th>Button</th><th>Status</th></tr>
-    <tr><td>Left Button</td><td><div id="left_button"></div></td></tr>
-    <tr><td>Right Button</td><td><div id="right_button"></div></td></tr>
-    <tr><td>Power Button</td><td><div id="power_button"></div></td></tr>
-    <tr><td>Left Shoulder Button</td><td><div id="left_shoulder_button"></div></td></tr>
-    <tr><td>Right Shoulder Button</td><td><div id="right_shoulder_button"></div></td></tr>
+    <tr><td>Mode Button</td><td><div id="mode_button"></div></td></tr>
+    <tr><td>LL Button</td><td><div id="ll_button"></div></td></tr>
+    <tr><td>GPS Button</td><td><div id="gps_button"></div></td></tr>
+    <tr><td>Stunt Shoulder Button</td><td><div id="stunt_button"></div></td></tr>
+    <tr><td>Video Shoulder Button</td><td><div id="video_button"></div></td></tr>
+    <tr><td>User Shoulder Button</td><td><div id="user_button"></div></td></tr>
+    <tr><td>TX Voltage</td><td><div id="tx_voltage"></div></td></tr>
   </table>
 <h2>Bind Transmitter</h2>
 
@@ -217,6 +220,21 @@ your transmitter with the left button pressed.
 <p>The transmitter will send bind packets for 5 seconds if powered on with left button pressed.<p>
 
 <input type="submit" name="action" value="Start Bind" onclick="mavlink_command_long_send(MAV_CMD_START_RX_PAIR, 0, 1);"/>
+
+</div>
+
+
+<div id="Flow" class="tabcontent">
+
+    <table class="values">
+    <tr><th>Variable</th><th>Value</th></tr>
+    <tr><td>FlowRoll</td><td><div name="MAVLINK:OPTICAL_FLOW:flow_rate_x"></div></td></tr>
+    <tr><td>GyroRoll</td><td><div name="MAVLINK:OPTICAL_FLOW:flow_comp_m_x"></div></td></tr>
+    <tr><td>FlowPitch</td><td><div name="MAVLINK:OPTICAL_FLOW:flow_rate_y"></div></td></tr>
+    <tr><td>GyroPitch</td><td><div name="MAVLINK:OPTICAL_FLOW:flow_comp_m_y"></div></td></tr>
+    </table>
+    <canvas id="flow_x_canvas" width="400" height="200"></canvas><p>
+    <canvas id="flow_y_canvas" width="400" height="200"></canvas><p>
 
 </div>
 
@@ -377,6 +395,8 @@ create_chart("pressure_canvas",   ["MAVLINK:SCALED_PRESSURE:press_abs"]);
 create_chart("temperature_canvas",["MAVLINK:SCALED_PRESSURE:temperature"]);
 create_chart("gps_canvas",        ["MAVLINK:GPS2_RAW:vel","MAVLINK:GPS2_RAW:eph","MAVLINK:GPS2_RAW:epv"]);
 create_chart("tx_canvas",         ["MAVLINK:RC_CHANNELS:chan1_raw","MAVLINK:RC_CHANNELS:chan2_raw","MAVLINK:RC_CHANNELS:chan3_raw","MAVLINK:RC_CHANNELS:chan4_raw"]);
+create_chart("flow_x_canvas",       ["MAVLINK:OPTICAL_FLOW:flow_rate_x","MAVLINK:OPTICAL_FLOW:flow_comp_m_x"])
+create_chart("flow_y_canvas",       ["MAVLINK:OPTICAL_FLOW:flow_rate_y","MAVLINK:OPTICAL_FLOW:flow_comp_m_y"])
 
 var have_3d_fix = false;
 
@@ -442,31 +462,47 @@ function mavlink_callback(mavlink) {
     var chan5 = mavlink.RC_CHANNELS.chan5_raw;
     var chan6 = mavlink.RC_CHANNELS.chan6_raw;
     var chan7 = mavlink.RC_CHANNELS.chan7_raw;
-    var left_button, right_button, left_shoulder_button, right_shoulder_button, power_button;
+    var mode_button, ll_button, gps_button, stunt_button, video_button, user_button;
     var rc_ok = (mavlink.SYS_STATUS.onboard_control_sensors_health & MAV_SYS_STATUS_SENSOR_RC_RECEIVER) != 0;
     var pressed_str = { false: "off", true: '<b style="color:green">on</b>' }
 
-    right_button = (chan6 > 1800);
-    left_button = (chan5 > 2050) || (chan5 > 1050 && chan5 < 1150);
+    // first 3 buttons encoded on channel 5
+    if (chan5 < 1000 || !rc_ok) {
+        mode_button = false;
+        ll_button = false;
+        gps_button = false;
+    } else {
+        var bits = Math.round((chan5 - 1000) / 100);
+        mode_button = ((bits & 1) != 0);
+        ll_button = ((bits & 2) != 0);
+        gps_button = ((bits & 4) != 0);
+    }
 
-    var bits = Math.round((chan7 - 1000) / 100);
-    if (chan7 < 1000 || !rc_ok) {
-        left_shoulder_button = false;
-        right_shoulder_button = false;
-        power_button = false;
+    // next 3 buttons encoded on channel 6
+    if (chan6 < 1000 || !rc_ok) {
+        stunt_button = false;
+        video_button = false;
+        user_button = false;
+    } else {
+        var bits = Math.round((chan6 - 1000) / 100);
+        stunt_button = ((bits & 1) != 0);
+        video_button = ((bits & 2) != 0);
+        user_button = ((bits & 4) != 0);
+    }
+    
+    if (!rc_ok) {
         document.getElementById("rc_ok").innerHTML = '<b style="color:red">OFF</b>';
     } else {
-        left_shoulder_button = ((bits & 1) != 0);
-        right_shoulder_button = ((bits & 2) != 0);
-        power_button = ((bits & 4) != 0);
         document.getElementById("rc_ok").innerHTML = '<b style="color:green">OK</b>';
     }
     
-    document.getElementById("left_button").innerHTML = pressed_str[left_button];
-    document.getElementById("right_button").innerHTML = pressed_str[right_button];
-    document.getElementById("left_shoulder_button").innerHTML = pressed_str[left_shoulder_button];
-    document.getElementById("right_shoulder_button").innerHTML = pressed_str[right_shoulder_button];
-    document.getElementById("power_button").innerHTML = pressed_str[power_button];
+    document.getElementById("mode_button").innerHTML = pressed_str[mode_button];
+    document.getElementById("ll_button").innerHTML = pressed_str[ll_button];
+    document.getElementById("gps_button").innerHTML = pressed_str[gps_button];
+    document.getElementById("stunt_button").innerHTML = pressed_str[stunt_button];
+    document.getElementById("video_button").innerHTML = pressed_str[video_button];
+    document.getElementById("user_button").innerHTML = pressed_str[user_button];
+    document.getElementById("tx_voltage").innerHTML = chan7;
 }
 
 fill_mavlink_ids({ 'chart_lines' : chart_lines,
