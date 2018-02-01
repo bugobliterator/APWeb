@@ -12,6 +12,7 @@
 #include "web_server.h"
 #include "mavlink_core.h"
 #include "mavlink_json.h"
+#include <math.h>
 
 static void print_one_field(struct sock_buf *sock, const mavlink_message_t *msg, const mavlink_field_info_t *f, int idx)
 {
@@ -45,12 +46,22 @@ static void print_one_field(struct sock_buf *sock, const mavlink_message_t *msg,
     case MAVLINK_TYPE_INT64_T:
         sock_printf(sock, PRINT_FORMAT(f, "%lld"), (long long)_MAV_RETURN_int64_t(msg, f->wire_offset+idx*8));
         break;
-    case MAVLINK_TYPE_FLOAT:
-        sock_printf(sock, PRINT_FORMAT(f, "%f"), (double)_MAV_RETURN_float(msg, f->wire_offset+idx*4));
+    case MAVLINK_TYPE_FLOAT: {
+        float v = _MAV_RETURN_float(msg, f->wire_offset+idx*4);
+        if (isnan(v)) {
+            v = 0;
+        }
+        sock_printf(sock, PRINT_FORMAT(f, "%f"), (double)v);
         break;
-    case MAVLINK_TYPE_DOUBLE:
-        sock_printf(sock, PRINT_FORMAT(f, "%f"), _MAV_RETURN_double(msg, f->wire_offset+idx*8));
+    }
+    case MAVLINK_TYPE_DOUBLE: {
+        double v = _MAV_RETURN_double(msg, f->wire_offset+idx*4);
+        if (isnan(v)) {
+            v = 0;
+        }
+        sock_printf(sock, PRINT_FORMAT(f, "%f"), (double)v);
         break;
+    }
     }
 }
 
