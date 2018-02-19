@@ -34,8 +34,9 @@ const scaling = { 'RAW_IMU:.acc' : [9.81 * 0.001, 3],
                   'ATTITUDE:pitch' : [180/Math.PI, 1],
                   'ATTITUDE:yaw' : [180/Math.PI, 1],
                   'SCALED_PRESSURE:temperature' : [0.01, 1],
-                  'GPS2_RAW:vel' : [0.01, 2],
-                  'GPS2_RAW:ep.' : [0.01, 2],
+                  'GPS_RAW:vel_acc' : [0.01, 2],
+                  'GPS_RAW:v_acc' : [0.01, 2],
+                  'GPS_RAW:h_acc' : [0.01, 2],
                   'SYS_STATUS:voltage_battery' : [0.001, 2]
                 }
 var scaling_re = {}
