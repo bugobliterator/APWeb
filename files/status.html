@@ -138,9 +138,9 @@ Core system information<p>
         <tr><td>Latitude (GPS)</td><td><div name="MAVLINK:GPS_RAW_INT:lat"></div></td></tr>
         <tr><td>Longitude (GPS)</td><td><div name="MAVLINK:GPS_RAW_INT:lon"></div></td></tr>
         <tr><td>Altitude (AMSL)</td><td><div name="MAVLINK:GPS_RAW_INT:alt"></div></td></tr>
-        <tr><td>Speed Accuracy</td><td><div name="MAVLINK:GPS_RAW:vel_acc"></div></td></tr>
-        <tr><td>Position Accuracy</td><td><div name="MAVLINK:GPS_RAW:h_acc"></div></td></tr>
-        <tr><td>Height Accuracy</td><td><div name="MAVLINK:GPS_RAW:v_acc"></div></td></tr>
+        <tr><td>Speed Accuracy</td><td><div name="MAVLINK:GPS_RAW_INT:vel_acc"></div></td></tr>
+        <tr><td>Position Accuracy</td><td><div name="MAVLINK:GPS_RAW_INT:h_acc"></div></td></tr>
+        <tr><td>Height Accuracy</td><td><div name="MAVLINK:GPS_RAW_INT:v_acc"></div></td></tr>
         <tr><td>MGA Cache Size</td><td><div id="offline_cache_size"></div></td></tr>
         <tr><td>MGA Upload UTC</td><td><div id="upload_utc"></div></td></tr>
         <tr><td>MGA Highest UTC</td><td><div id="highest_utc"></div></td></tr>
@@ -402,7 +402,7 @@ create_chart("mag_canvas",   ["MAVLINK:RAW_IMU:xmag", "MAVLINK:RAW_IMU:ymag", "M
 
 create_chart("pressure_canvas",   ["MAVLINK:SCALED_PRESSURE:press_abs"]);
 create_chart("temperature_canvas",["MAVLINK:SCALED_PRESSURE:temperature"]);
-create_chart("gps_canvas",        ["MAVLINK:GPS_RAW:vel_acc","MAVLINK:GPS_RAW:h_acc","MAVLINK:GPS_RAW:v_acc"]);
+create_chart("gps_canvas",        ["MAVLINK:GPS_RAW_INT:vel_acc","MAVLINK:GPS_RAW_INT:h_acc","MAVLINK:GPS_RAW_INT:v_acc"]);
 create_chart("tx_canvas",         ["MAVLINK:RC_CHANNELS:chan1_raw","MAVLINK:RC_CHANNELS:chan2_raw","MAVLINK:RC_CHANNELS:chan3_raw","MAVLINK:RC_CHANNELS:chan4_raw"]);
 create_chart("flow_x_canvas",     ["MAVLINK:OPTICAL_FLOW:flow_rate_x","MAVLINK:OPTICAL_FLOW:flow_comp_m_x"]);
 create_chart("flow_y_canvas",     ["MAVLINK:OPTICAL_FLOW:flow_rate_y","MAVLINK:OPTICAL_FLOW:flow_comp_m_y"]);
