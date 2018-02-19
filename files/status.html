@@ -205,11 +205,11 @@ Core system information<p>
   <table class="values">
     <tr><th>Button</th><th>Status</th></tr>
     <tr><td>Mode Button</td><td><div id="mode_button"></div></td></tr>
-    <tr><td>LL Button</td><td><div id="ll_button"></div></td></tr>
+    <tr><td>Launch/Land Button</td><td><div id="ll_button"></div></td></tr>
     <tr><td>GPS Button</td><td><div id="gps_button"></div></td></tr>
     <tr><td>Stunt Shoulder Button</td><td><div id="stunt_button"></div></td></tr>
     <tr><td>Video Shoulder Button</td><td><div id="video_button"></div></td></tr>
-    <tr><td>User Shoulder Button</td><td><div id="user_button"></div></td></tr>
+    <tr><td>Power Button</td><td><div id="power_button"></div></td></tr>
     <tr><td>TX Voltage</td><td><div id="tx_voltage"></div></td></tr>
   </table>
 <h2>Bind Transmitter</h2>
@@ -471,7 +471,7 @@ function mavlink_callback(mavlink) {
     var chan5 = mavlink.RC_CHANNELS.chan5_raw;
     var chan6 = mavlink.RC_CHANNELS.chan6_raw;
     var chan7 = mavlink.RC_CHANNELS.chan7_raw;
-    var mode_button, ll_button, gps_button, stunt_button, video_button, user_button;
+    var mode_button, ll_button, gps_button, stunt_button, video_button, power_button;
     var rc_ok = (mavlink.SYS_STATUS.onboard_control_sensors_health & MAV_SYS_STATUS_SENSOR_RC_RECEIVER) != 0;
     var pressed_str = { false: "off", true: '<b style="color:green">on</b>' }
 
@@ -491,12 +491,12 @@ function mavlink_callback(mavlink) {
     if (chan6 < 1000 || !rc_ok) {
         stunt_button = false;
         video_button = false;
-        user_button = false;
+        power_button = false;
     } else {
         var bits = Math.round((chan6 - 1000) / 100);
         stunt_button = ((bits & 1) != 0);
         video_button = ((bits & 2) != 0);
-        user_button = ((bits & 4) != 0);
+        power_button = ((bits & 4) != 0);
     }
     
     if (!rc_ok) {
@@ -510,7 +510,7 @@ function mavlink_callback(mavlink) {
     document.getElementById("gps_button").innerHTML = pressed_str[gps_button];
     document.getElementById("stunt_button").innerHTML = pressed_str[stunt_button];
     document.getElementById("video_button").innerHTML = pressed_str[video_button];
-    document.getElementById("user_button").innerHTML = pressed_str[user_button];
+    document.getElementById("power_button").innerHTML = pressed_str[power_button];
     document.getElementById("tx_voltage").innerHTML = chan7;
 }
 
