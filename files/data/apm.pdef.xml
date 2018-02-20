@@ -8672,7 +8672,7 @@
 <value code="24">ModeFlowHold</value>
 </values>
 </param>
-<param humanName="Tmode left action" name="TMODE_LEFT" documentation="This is the action taken for the left button (mode button) being pressed" user="Standard">
+<param humanName="Tmode mode button action" name="TMODE_MODE_BTN" documentation="This is the action taken for the mode button being pressed" user="Standard">
 <values>
 <value code="0">None</value>
 <value code="1">TakePhoto</value>
@@ -8701,7 +8701,7 @@
 <value code="24">ModeFlowHold</value>
 </values>
 </param>
-<param humanName="Tmode left long action" name="TMODE_LEFT_LONG" documentation="This is the action taken for a long press of the left button (home button)" user="Standard">
+<param humanName="Tmode mode button long action" name="TMODE_MODE_LONG" documentation="This is the action taken for a long press of the mode button" user="Standard">
 <values>
 <value code="0">None</value>
 <value code="1">TakePhoto</value>
@@ -8733,7 +8733,7 @@
 <param humanName="Stick auto trim limit" name="TMODE_TRIM_AUTO" documentation="This is the amount of automatic stick trim that can be applied when disarmed with sticks not moving. It is a PWM limit value away from 1500" user="Standard">
 <field name="Range">0 100</field>
 </param>
-<param humanName="Tmode right action" name="TMODE_RIGHT" documentation="This is the action taken for the right button (RTL) being pressed" user="Standard">
+<param humanName="Tmode launch/land button action" name="TMODE_LL_BTN" documentation="This is the action taken for the launch/land button being pressed" user="Standard">
 <values>
 <value code="0">None</value>
 <value code="1">TakePhoto</value>
