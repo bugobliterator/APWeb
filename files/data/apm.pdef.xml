@@ -983,7 +983,7 @@
 <param humanName="ADSB vehicle list radius filter" name="ADSB_LIST_RADIUS" documentation="ADSB vehicle list radius filter. Vehicles detected outside this radius will be completely ignored. They will not show up in the SRx_ADSB stream to the GCS and will not be considered in any avoidance calculations." user="Advanced">
 <field name="Range">1 100000</field>
 </param>
-<param humanName="ICAO_ID vehicle identifaction number" name="ADSB_ICAO_ID" documentation="ICAO_ID unique vehicle identifaction number of this aircraft. This is a integer limited to 24bits. If set to 0 then one will be randomly generated. If set to -1 then static information is not sent, transceiver is assumed pre-programmed." user="Advanced">
+<param humanName="ICAO_ID vehicle identification number" name="ADSB_ICAO_ID" documentation="ICAO_ID unique vehicle identification number of this aircraft. This is a integer limited to 24bits. If set to 0 then one will be randomly generated. If set to -1 then static information is not sent, transceiver is assumed pre-programmed." user="Advanced">
 <field name="Range">-1 16777215</field>
 </param>
 <param humanName="Emitter type" name="ADSB_EMIT_TYPE" documentation="ADSB classification for the type of vehicle emitting the transponder signal. Default value is 14 (UAV)." user="Advanced">
