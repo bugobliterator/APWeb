@@ -49,7 +49,7 @@ Core system information<p>
 <h3>Flight Board Status</h3>
 
 <table class="values">
-  <tr><td>Mode</td><td><div name="MAVLINK:HEARTBEAT:custom_mode"></div></td></tr>
+  <tr><td>Mode</td><td><div id="flight_mode"></div></td></tr>
   <tr><td>Uptime</td><td><div name="MAVLINK:ATTITUDE:time_boot_ms"></div></td></tr>
   <tr><td>Voltage</td><td><div name="MAVLINK:SYS_STATUS:voltage_battery"></div></td></tr>
 </table>
@@ -433,6 +433,38 @@ function mavlink_callback(mavlink) {
         return "0" + v;
     }
 
+    if (mavlink.HEARTBEAT != null) {
+        var d = document.getElementById("flight_mode");
+        var mode = mavlink.HEARTBEAT.custom_mode;
+        var mode_map = {
+            0 : "STABILIZE",
+            1 : "ACRO",
+            2 : "ALT_HOLD",
+            3 : "AUTO",
+            4 : "GUIDED",
+            5 : "LOITER",
+            6 : "RTL",
+            7 : "CIRCLE",
+            9 : "LAND",
+            11 : "DRIFT",
+            13 : "SPORT",
+            14 : "FLIP",
+            15 : "AUTOTUNE",
+            16 : "POSHOLD",
+            17 : "BRAKE",
+            18 : "THROW",
+            19 : "AVOID_ADSB",
+            20 : "GUIDED_NOGPS",
+            21 : "SMART_RTL",
+            22 : "FLOWHOLD "
+        };
+        if (mode in mode_map) {
+            d.innerHTML = mode_map[mode];
+        } else {
+            d.innerHTML = mode;
+        }
+    }
+    
     if (mavlink.EKF_STATUS_REPORT != null) {
         var flags = mavlink.EKF_STATUS_REPORT.flags;
         var d = document.getElementById("EKF_GPS_STATUS");
@@ -516,7 +548,7 @@ function mavlink_callback(mavlink) {
 
 fill_mavlink_ids({ 'chart_lines' : chart_lines,
                    'callback_fn' : mavlink_callback,
-                   'extra_msgs' : ['STATUSTEXT'] });
+                   'extra_msgs' : ['STATUSTEXT','HEARTBEAT'] });
 
 // poll system information at 1Hz
 ajax_json_poll_fill(drone_url + "/ajax/sysinfo.json", 1000);
