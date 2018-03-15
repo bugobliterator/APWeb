@@ -288,6 +288,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flight Mode 2" name="ArduCopter:FLTMODE2" documentation="Flight mode when Channel 5 pwm is &gt;1230, &lt;= 1360" user="Standard">
@@ -311,6 +313,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flight Mode 3" name="ArduCopter:FLTMODE3" documentation="Flight mode when Channel 5 pwm is &gt;1360, &lt;= 1490" user="Standard">
@@ -334,6 +338,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flight Mode 4" name="ArduCopter:FLTMODE4" documentation="Flight mode when Channel 5 pwm is &gt;1490, &lt;= 1620" user="Standard">
@@ -357,6 +363,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flight Mode 5" name="ArduCopter:FLTMODE5" documentation="Flight mode when Channel 5 pwm is &gt;1620, &lt;= 1749" user="Standard">
@@ -380,6 +388,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flight Mode 6" name="ArduCopter:FLTMODE6" documentation="Flight mode when Channel 5 pwm is &gt;=1750" user="Standard">
@@ -403,6 +413,8 @@
 <value code="19">Avoid_ADSB</value>
 <value code="20">Guided_NoGPS</value>
 <value code="21">Smart_RTL</value>
+<value code="22">FlowHold</value>
+<value code="23">Follow</value>
 </values>
 </param>
 <param humanName="Flightmode channel" name="ArduCopter:FLTMODE_CH" documentation="RC Channel to use for flight mode control" user="Advanced">
@@ -1588,6 +1600,7 @@
 <value code="5">Solo</value>
 <value code="6">Bebop</value>
 <value code="7">SMBus-Maxell</value>
+<value code="8">UAVCAN-BatteryInfo</value>
 </values>
 </param>
 <param humanName="Battery Voltage sensing pin" name="BATT2_VOLT_PIN" documentation="Setting this to 0 ~ 13 will enable battery voltage sensing on pins A0 ~ A13. On the PX4-v1 it should be set to 100. On the Pixhawk, Pixracer and NAVIO boards it should be set to 2, Pixhawk2 Power2 is 13." user="Standard">
@@ -1630,7 +1643,7 @@
 <field name="Units">W</field>
 <field name="UnitText">watt</field>
 </param>
-<param humanName="Battery serial number" name="BATT2_SERIAL_NUM" documentation="Battery serial number, automatically filled in for SMBus batteries, otherwise will be -1" user="Advanced">
+<param humanName="Battery serial number" name="BATT2_SERIAL_NUM" documentation="Battery serial number, automatically filled in for SMBus batteries, otherwise will be -1. With UAVCAN it is the battery_id." user="Advanced">
 </param>
 <param humanName="Low voltage timeout" name="BATT2_LOW_TIMER" documentation="This is the timeout in seconds before a low voltage event will be triggered. For aircraft with low C batteries it may be necessary to raise this in order to cope with low voltage on long takeoffs. A value of zero disables low voltage errors." user="Advanced">
 <field name="Range">0 120</field>
@@ -1654,6 +1667,7 @@
 <value code="5">Solo</value>
 <value code="6">Bebop</value>
 <value code="7">SMBus-Maxell</value>
+<value code="8">UAVCAN-BatteryInfo</value>
 </values>
 </param>
 <param humanName="Battery Voltage sensing pin" name="BATT_VOLT_PIN" documentation="Setting this to 0 ~ 13 will enable battery voltage sensing on pins A0 ~ A13. On the PX4-v1 it should be set to 100. On the Pixhawk, Pixracer and NAVIO boards it should be set to 2, Pixhawk2 Power2 is 13." user="Standard">
@@ -1696,7 +1710,7 @@
 <field name="Units">W</field>
 <field name="UnitText">watt</field>
 </param>
-<param humanName="Battery serial number" name="BATT_SERIAL_NUM" documentation="Battery serial number, automatically filled in for SMBus batteries, otherwise will be -1" user="Advanced">
+<param humanName="Battery serial number" name="BATT_SERIAL_NUM" documentation="Battery serial number, automatically filled in for SMBus batteries, otherwise will be -1. With UAVCAN it is the battery_id." user="Advanced">
 </param>
 <param humanName="Low voltage timeout" name="BATT_LOW_TIMER" documentation="This is the timeout in seconds before a low voltage event will be triggered. For aircraft with low C batteries it may be necessary to raise this in order to cope with low voltage on long takeoffs. A value of zero disables low voltage errors." user="Advanced">
 <field name="Range">0 120</field>
@@ -3319,6 +3333,58 @@
 <field name="Range">0 127</field>
 </param>
 </parameters>
+<parameters name="FOLL">
+<param humanName="Follow enable/disable" name="FOLL_ENABLE" documentation="Enabled/disable following a target" user="Standard">
+<values>
+<value code="0">Disabled</value>
+<value code="1">Enabled</value>
+</values>
+</param>
+<param humanName="Follow target's mavlink system id" name="FOLL_SYSID" documentation="Follow target's mavlink system id" user="Standard">
+<field name="Range">0 255</field>
+</param>
+<param humanName="Follow distance maximum" name="FOLL_DIST_MAX" documentation="Follow distance maximum.  targets further than this will be ignored" user="Standard">
+<field name="Range">1 1000</field>
+<field name="Units">m</field>
+<field name="UnitText">meters</field>
+</param>
+<param humanName="Follow offset type" name="FOLL_OFS_TYPE" documentation="Follow offset type" user="Standard">
+<values>
+<value code="0">North-East-Down</value>
+<value code=" 1">Relative to lead vehicle heading</value>
+</values>
+</param>
+<param humanName="Follow offsets in meters north/forward" name="FOLL_OFS_X" documentation="Follow offsets in meters north/forward.  If positive, this vehicle fly ahead or north of lead vehicle.  Depends on FOLL_OFS_TYPE" user="Standard">
+<field name="Range">-100 100</field>
+<field name="Increment">1</field>
+<field name="Units">m</field>
+<field name="UnitText">meters</field>
+</param>
+<param humanName="Follow offsets in meters east/right" name="FOLL_OFS_Y" documentation="Follow offsets in meters east/right.  If positive, this vehicle fly to the right or east of lead vehicle.  Depends on FOLL_OFS_TYPE" user="Standard">
+<field name="Range">-100 100</field>
+<field name="Increment">1</field>
+<field name="Units">m</field>
+<field name="UnitText">meters</field>
+</param>
+<param humanName="Follow offsets in meters down" name="FOLL_OFS_Z" documentation="Follow offsets in meters down.  If positive, this vehicle fly below the lead vehicle" user="Standard">
+<field name="Range">-100 100</field>
+<field name="Increment">1</field>
+<field name="Units">m</field>
+<field name="UnitText">meters</field>
+</param>
+<param humanName="Follow yaw behaviour" name="FOLL_YAW_BEHAVE" documentation="Follow yaw behaviour" user="Standard">
+<values>
+<value code="0">None</value>
+<value code="1">Face Lead Vehicle</value>
+<value code="2">Same as Lead vehicle</value>
+<value code="3">Direction of Flight</value>
+</values>
+</param>
+<param humanName="Follow position error P gain" name="FOLL_POS_P" documentation="Follow position error P gain.  Converts the difference between desired vertical speed and actual speed into a desired acceleration that is passed to the throttle acceleration controller" user="Standard">
+<field name="Range">0.01 1.00</field>
+<field name="Increment">0.01</field>
+</param>
+</parameters>
 <parameters name="GND_">
 <param humanName="Absolute Pressure" name="GND_ABS_PRESS" documentation="calibrated ground pressure in Pascals" user="Advanced">
 <field name="ReadOnly">True</field>
@@ -4121,6 +4187,16 @@
 <value code="3">FirstAndSecondIMU</value>
 </values>
 </param>
+<param humanName="Gyro DLPF cutoff" name="INS_GYRO_DLPF" documentation="Cutoff frequency for in-sensor gyro DLPF when supported" user="Advanced">
+<field name="Range">0 256</field>
+<field name="Units">Hz</field>
+<field name="UnitText">hertz</field>
+</param>
+<param humanName="Accel DLPF cutoff" name="INS_ACCEL_DLPF" documentation="Cutoff frequency for in-sensor accel DLPF when supported" user="Advanced">
+<field name="Range">0 256</field>
+<field name="Units">Hz</field>
+<field name="UnitText">hertz</field>
+</param>
 </parameters>
 <parameters name="INS_LOG_">
 <param humanName="sample count per batch" name="INS_LOG_BAT_CNT" documentation="Number of samples to take when logging streams of IMU sensor readings.  Will be rounded down to a multiple of 32." user="Advanced">
@@ -4132,6 +4208,12 @@
 <value code="0">None</value>
 <value code="1">First IMU</value>
 <value code="255">All</value>
+</values>
+</param>
+<param humanName="Enable raw batch logging" name="INS_LOG_BAT_RAW" documentation="This allows 4kHz IMU logging on supported sensors" user="Advanced">
+<values>
+<value code="0">Disabled</value>
+<value code="1">Enabled</value>
 </values>
 </param>
 </parameters>
@@ -6217,10 +6299,9 @@
 <value code=" 5">GPS</value>
 <value code=" 7">Alexmos Gimbal Serial</value>
 <value code=" 8">SToRM32 Gimbal Serial</value>
-<value code=" 9">Lidar</value>
+<value code=" 9">Rangefinder</value>
 <value code=" 10">FrSky SPort Passthrough (OpenTX)</value>
 <value code=" 11">Lidar360</value>
-<value code=" 12">Aerotenna uLanding</value>
 <value code=" 13">Beacon</value>
 <value code=" 14">Volz servo out</value>
 <value code=" 15">SBus servo out</value>
@@ -6253,10 +6334,9 @@
 <value code=" 5">GPS</value>
 <value code=" 7">Alexmos Gimbal Serial</value>
 <value code=" 8">SToRM32 Gimbal Serial</value>
-<value code=" 9">Lidar</value>
+<value code=" 9">Rangefinder</value>
 <value code=" 10">FrSky SPort Passthrough (OpenTX)</value>
 <value code=" 11">Lidar360</value>
-<value code=" 12">Aerotenna uLanding</value>
 <value code=" 13">Beacon</value>
 <value code=" 14">Volz servo out</value>
 <value code=" 15">SBus servo out</value>
@@ -6289,10 +6369,9 @@
 <value code=" 5">GPS</value>
 <value code=" 7">Alexmos Gimbal Serial</value>
 <value code=" 8">SToRM32 Gimbal Serial</value>
-<value code=" 9">Lidar</value>
+<value code=" 9">Rangefinder</value>
 <value code=" 10">FrSky SPort Passthrough (OpenTX)</value>
 <value code=" 11">Lidar360</value>
-<value code=" 12">Aerotenna uLanding</value>
 <value code=" 13">Beacon</value>
 <value code=" 14">Volz servo out</value>
 <value code=" 15">SBus servo out</value>
@@ -6325,10 +6404,9 @@
 <value code=" 5">GPS</value>
 <value code=" 7">Alexmos Gimbal Serial</value>
 <value code=" 8">SToRM32 Gimbal Serial</value>
-<value code=" 9">Lidar</value>
+<value code=" 9">Rangefinder</value>
 <value code=" 10">FrSky SPort Passthrough (OpenTX)</value>
 <value code=" 11">Lidar360</value>
-<value code=" 12">Aerotenna uLanding</value>
 <value code=" 13">Beacon</value>
 <value code=" 14">Volz servo out</value>
 <value code=" 15">SBus servo out</value>
@@ -6361,10 +6439,9 @@
 <value code=" 5">GPS</value>
 <value code=" 7">Alexmos Gimbal Serial</value>
 <value code=" 8">SToRM32 Gimbal Serial</value>
-<value code=" 9">Lidar</value>
+<value code=" 9">Rangefinder</value>
 <value code=" 10">FrSky SPort Passthrough (OpenTX)</value>
 <value code=" 11">Lidar360</value>
-<value code=" 12">Aerotenna uLanding</value>
 <value code=" 13">Beacon</value>
 <value code=" 14">Volz servo out</value>
 <value code=" 15">SBus servo out</value>
@@ -8452,7 +8529,7 @@
 <value code="2">EnableVersion2</value>
 </values>
 </param>
-<param humanName="Tmode first mode" name="TMODE_MODE1" documentation="This is the initial mode when the vehicle is first turned on. This mode is assumed to not require GPS" user="Standard">
+<param humanName="Tmode first mode" name="TMODE_MODE1" documentation="This is the initial mode when the vehicle is first turned on." user="Standard">
 <values>
 <value code="0">Stabilize</value>
 <value code="1">Acro</value>
@@ -8475,7 +8552,7 @@
 <value code="22">FlowHold</value>
 </values>
 </param>
-<param humanName="Tmode second mode" name="TMODE_MODE2" documentation="This is the secondary mode. This mode is assumed to require GPS" user="Standard">
+<param humanName="Tmode second mode" name="TMODE_MODE2" documentation="This is the secondary mode." user="Standard">
 <values>
 <value code="0">Stabilize</value>
 <value code="1">Acro</value>
@@ -8792,6 +8869,34 @@
 <value code="0">ConstantThrust</value>
 <value code="1">LogReplay1</value>
 <value code="2">LogReplay2</value>
+</values>
+</param>
+<param humanName="GPS button action" name="TMODE_GPS_BTN" documentation="This is the action taken for the GPS button" user="Standard">
+<values>
+<value code="0">None</value>
+<value code="1">TakePhoto</value>
+<value code="2">ToggleVideo</value>
+<value code="3">ModeAcro</value>
+<value code="4">ModeAltHold</value>
+<value code="5">ModeAuto</value>
+<value code="6">ModeLoiter</value>
+<value code="7">ModeRTL</value>
+<value code="8">ModeCircle</value>
+<value code="9">ModeLand</value>
+<value code="10">ModeDrift</value>
+<value code="11">ModeSport</value>
+<value code="12">ModeAutoTune</value>
+<value code="13">ModePosHold</value>
+<value code="14">ModeBrake</value>
+<value code="15">ModeThrow</value>
+<value code="16">Flip</value>
+<value code="17">ModeStabilize</value>
+<value code="18">Disarm</value>
+<value code="19">ToggleMode</value>
+<value code="20">Arm-Land-RTL</value>
+<value code="21">ToggleSimpleMode</value>
+<value code="22">ToggleSuperSimpleMode</value>
+<value code="23">MotorLoadTest</value>
 </values>
 </param>
 </parameters>
