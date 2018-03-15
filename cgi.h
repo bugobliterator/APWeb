@@ -63,6 +63,7 @@ struct cgi_state {
 
 enum CGI_MIME_TYPE {MIME_TYPE_IMAGE_GIF,
                     MIME_TYPE_IMAGE_JPEG,
+                    MIME_TYPE_IMAGE_BMP,
                     MIME_TYPE_IMAGE_SVG,
                     MIME_TYPE_TEXT_PLAIN,
                     MIME_TYPE_TEXT_HTML,

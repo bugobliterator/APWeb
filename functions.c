@@ -166,7 +166,6 @@ static void snapshot(struct template_state *tmpl, const char *name, const char *
     }
 }
 
-
 // note the stream we're using so we can auto-close on new connection
 static struct sock_buf *mpeg_stream_sock;
 
@@ -252,6 +251,76 @@ static void take_picture(struct template_state *tmpl, const char *name, const ch
     console_printf("take_picture\n");
     set_takepic_num(1);
     mf_set_snapshot(1);
+}
+
+/*
+  return flow camera image as a BMP for testing of the camera
+ */
+static void flow_bmp(struct template_state *tmpl, const char *name, const char *value, int argc, char **argv)
+{
+    uint8_t *image = NULL;
+    uint16_t width, height;
+    
+    struct __attribute__((packed)) {
+        uint16_t type; // 0x4d42
+        uint32_t size;
+        uint16_t res1;
+        uint16_t res2;
+        uint32_t img_offset;
+        uint32_t dib_header_size;
+        uint32_t width;
+        uint32_t height;
+        uint16_t num_planes;
+        uint16_t bpp;
+        uint32_t compression;
+        uint32_t image_size_bytes;
+        int32_t  x_ppm; // pixels per meter
+        int32_t  y_ppm;
+        uint32_t num_colors;
+        uint32_t important_colors;
+    } bmp_header;
+
+    if (!get_flow_image(&image, &width, &height)) {
+        console_printf("No flow image\n");
+        return;
+    }
+
+    // work out line width with padding to multiple of 4 bytes
+    uint16_t line_width = ((width+1)*3 / 4) * 4;
+    
+    /*
+      represent as 24 bit color, with R, G and B equal for ease of implementation
+     */
+    memset(&bmp_header, 0, sizeof(bmp_header));
+    bmp_header.type = 0x4d42;
+    bmp_header.size = sizeof(bmp_header) + line_width * height;
+    bmp_header.img_offset = sizeof(bmp_header);
+    bmp_header.dib_header_size = 40;
+    bmp_header.width = width;
+    bmp_header.height = height;
+    bmp_header.num_planes = 1;
+    bmp_header.bpp = 24;
+    bmp_header.image_size_bytes = line_width * height;
+    bmp_header.x_ppm = 1000;
+    bmp_header.y_ppm = 1000;
+
+    uint8_t *line = talloc_zero_size(tmpl->sock, line_width);
+    if (line == NULL) {
+        return;
+    }
+
+    sock_write(tmpl->sock, (const char *)&bmp_header, sizeof(bmp_header));
+    uint16_t row;
+    for (row = 0; row<height; row++) {
+        uint8_t x;
+        for (x=0; x<width; x++) {
+            line[x*3+0] = image[row*width+x];
+            line[x*3+1] = image[row*width+x];
+            line[x*3+2] = image[row*width+x];
+        }
+        sock_write(tmpl->sock, (const char *)line, line_width);
+    }
+    
 }
 #endif // SYSTEM_FREERTOS
 
@@ -1155,6 +1224,7 @@ void functions_init(struct template_state *tmpl)
     tmpl->put(tmpl, "mem_free", "", mem_free);
     tmpl->put(tmpl, "snapshot", "", snapshot);
     tmpl->put(tmpl, "mjpgvideo", "", mjpg_video);
+    tmpl->put(tmpl, "flowbmp", "", flow_bmp);
     tmpl->put(tmpl, "take_picture", "", take_picture);
     tmpl->put(tmpl, "get_ssid_info", "", get_ssid_info);
     tmpl->put(tmpl, "set_ssid", "", set_ssid);

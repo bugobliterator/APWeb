@@ -427,6 +427,7 @@ static const struct mime_type {
 } mime_types[] = {
     {".gif",  "image/gif",  MIME_TYPE_IMAGE_GIF},
     {".jpg",  "image/jpeg", MIME_TYPE_IMAGE_JPEG},
+    {".bmp",  "image/bmp", MIME_TYPE_IMAGE_BMP},
     {".txt",  "text/plain", MIME_TYPE_TEXT_PLAIN},
     {".html", "text/html;charset=UTF-8",  MIME_TYPE_TEXT_HTML},
     {".mp4",  "video/mp4",  MIME_TYPE_VIDEO_MP4},
