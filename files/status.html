@@ -25,6 +25,7 @@
   <button class="tablinks" onclick="openTab(event, 'GPS')">GPS</button>
   <button class="tablinks" onclick="openTab(event, 'EKF')">EKF</button>
   <button class="tablinks" onclick="openTab(event, 'Flow')">Flow</button>
+  <button class="tablinks" onclick="openTab(event, 'FlowCamera')">FlowCamera</button>
   <button class="tablinks" onclick="openTab(event, 'Transmitter')">Transmitter</button>
   <button class="tablinks" onclick="openTab(event, 'Camera')">Camera</button>
   <button class="tablinks" onclick="openTab(event, 'Motors')">Motors</button>
@@ -297,7 +298,7 @@ function refresh_camera() {
 }
 
 var img = document.getElementById("snapshot");
-img.onload = function() {
+function camera_onload() {
     if (activeTab == "Camera") {
         var dt = refresh_ms();
         var now = new Date().getTime();
@@ -305,7 +306,49 @@ img.onload = function() {
         setTimeout(refresh_camera,Math.max(dt, 0));
     }
 }
+img.onload = camera_onload;
+
 refresh_camera();
+
+    </script>
+</div>
+
+
+<div id="FlowCamera" class="tabcontent">
+    <img src="" alt="flowbmp" id="flowbmp" width="560" height="560">
+    <p>
+    Note: Image will refresh approximately every 10 seconds
+    <script>
+var last_flow_refresh_ms = new Date().getTime();
+
+function disable_flow_camera() {
+    var img = document.getElementById("flowbmp");
+    img.src = "";
+    command_send("mavlink_message_send(PARAM_SET,0,0,FLOW_IMAGE_VIEW,0)");
+    console.log("disable_flow_camera");
+}
+
+function refresh_flow_camera() {
+    var img = document.getElementById("flowbmp");
+    img.src = drone_url + "/ajax/flow.bmp?" + Math.random();
+    last_flow_refresh_ms = new Date().getTime();
+    command_send("mavlink_message_send(PARAM_SET,0,0,FLOW_IMAGE_VIEW,1)");
+}
+
+var flow_img = document.getElementById("flowbmp");
+function flow_onload() {
+    if (activeTab == "FlowCamera") {
+        var dt = 1000;
+        var now = new Date().getTime();
+        dt -= (now - last_refresh_ms);
+        setTimeout(refresh_flow_camera,Math.max(dt, 0));
+    } else {
+        disable_flow_camera();
+    }
+}
+flow_img.onload = flow_onload;
+
+refresh_flow_camera();
 
     </script>
 </div>
@@ -415,6 +458,11 @@ function tab_clicked(tabName) {
         refresh_camera();
     } else {
         disable_camera();
+    }
+    if (tabName == "FlowCamera") {
+        refresh_flow_camera();
+    } else {
+        disable_flow_camera();
     }
 }
 
