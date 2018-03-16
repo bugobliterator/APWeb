@@ -3332,6 +3332,12 @@
 <param humanName="Address on the bus" name="FLOW_ADDR" documentation="This is used to select between multiple possible I2C addresses for some sensor types. For PX4Flow you can choose 0 to 7 for the 8 possible addresses on the I2C bus." user="Advanced">
 <field name="Range">0 127</field>
 </param>
+<param humanName="Enable viewing of flow camera images" name="FLOW_IMAGE_VIEW" documentation="When this is enabled normal flow operation is disabled and instead images from the flow camera are sent, if supported by the driver. This parameter is automatically reset to 0 on startup" user="Advanced">
+<values>
+<value code="0">Disabled</value>
+<value code="1">Enabled</value>
+</values>
+</param>
 </parameters>
 <parameters name="FOLL">
 <param humanName="Follow enable/disable" name="FOLL_ENABLE" documentation="Enabled/disable following a target" user="Standard">
